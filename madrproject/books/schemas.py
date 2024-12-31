@@ -19,3 +19,9 @@ class BookSchemaPublic(BooksSchema):
 
 class BookSchemaList(BaseModel):
     books: List[BookSchemaPublic]
+
+
+class BookSchemaUpdate(BaseModel):
+    year: int | None = None
+    title: str | None = None
+    novelist_id: int | None = None

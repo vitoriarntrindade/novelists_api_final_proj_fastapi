@@ -3,6 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from madrproject.config.database import mapper_registry
 
+
 @mapper_registry.mapped_as_dataclass
 class Books:
     __tablename__ = 'books'

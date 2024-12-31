@@ -1,6 +1,5 @@
 from typing import List
 
-from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from madrproject.config.database import mapper_registry
@@ -13,5 +12,8 @@ class Novelist:
     name: Mapped[str] = mapped_column(unique=True)
 
     books: Mapped[List['Books']] = relationship(
-        'Books', back_populates='novelist', cascade='all, delete-orphan', default_factory=list
+        'Books',
+        back_populates='novelist',
+        cascade='all, delete-orphan',
+        default_factory=list,
     )
