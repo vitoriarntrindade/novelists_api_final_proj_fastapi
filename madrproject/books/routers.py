@@ -107,7 +107,7 @@ def delete_book(
     if not book_db:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
-            detail=f'The book ID {book_id} was not found.',
+            detail=f'The book with ID {book_id} was not found.',
         )
 
     session.delete(book_db)

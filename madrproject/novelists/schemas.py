@@ -15,3 +15,11 @@ class NovelistSchema(BaseModel):
 
 class NovelistPublicSchema(NovelistSchema):
     id: int
+
+
+class NovelistPublicSchemaList(BaseModel):
+    novelists: List[NovelistPublicSchema]
+
+
+class UpdateNovelistSchema(BaseModel):
+    name: str | None = None
