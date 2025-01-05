@@ -28,7 +28,8 @@ def create_new_novelist(
 
     if existing_novelist:
         raise HTTPException(
-            status_code=HTTPStatus.CONFLICT, detail='Novelist already exists.'
+            status_code=HTTPStatus.CONFLICT,
+            detail=f'The novelist with name {novelist.name} already exists.',
         )
 
     new_novelist = Novelist(name=novelist.name)
@@ -70,6 +71,29 @@ def list_novelists(
     return {'novelists': response_data}
 
 
+@router.get(
+    '/{novelist_id}',
+    response_model=NovelistPublicSchema,
+    status_code=HTTPStatus.OK,
+)
+def get_novelist_by_id(
+    novelist_id: int,
+    session: Session = Depends(get_session),
+    account: Account = Depends(get_current_account),
+):
+    novelist_db = session.scalar(
+        select(Novelist).where(Novelist.id == novelist_id)
+    )
+
+    if not novelist_db:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail=f'The novelist with ID {novelist_id} was not found.',
+        )
+
+    return novelist_db
+
+
 @router.patch(
     '/{novelist_id}',
     response_model=NovelistPublicSchema,
@@ -99,3 +123,31 @@ def update_novelist(
     session.refresh(novelist_db)
 
     return novelist_db
+
+
+@router.delete(
+    '/{novelist_id}',
+    status_code=HTTPStatus.OK,
+)
+def delete_novelist(
+    novelist_id: int,
+    session: Session = Depends(get_session),
+    account: Account = Depends(get_current_account),
+):
+    novelist_db = session.scalar(
+        select(Novelist).where(Novelist.id == novelist_id)
+    )
+
+    if not novelist_db:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail=f'The Novelist with ID {novelist_id} was not found.',
+        )
+
+    session.delete(novelist_db)
+    session.commit()
+
+    return {
+        'message': 'The novelist was successfully deleted.',
+        'novelist': {'name': novelist_db.name, 'id': novelist_db.id},
+    }
