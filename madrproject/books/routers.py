@@ -96,6 +96,25 @@ def list_books(
     return {'books': books}
 
 
+@router.get(
+    '/{book_id}', response_model=BookSchemaPublic, status_code=HTTPStatus.OK
+)
+def get_book_by_id(
+    book_id: int,
+    session: Session = Depends(get_session),
+    account: Account = Depends(get_current_account),
+):
+    book_db = session.scalar(select(Books).where(Books.id == book_id))
+
+    if not book_db:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail=f'The book with ID {book_id} was not found.',
+        )
+
+    return book_db
+
+
 @router.delete('/{book_id}', status_code=HTTPStatus.OK)
 def delete_book(
     book_id: int,
