@@ -1,8 +1,10 @@
-from typing import List, Optional
+from typing import List, Optional, Sequence
 
+from pydantic import EmailStr
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
+from madrproject import Account
 from madrproject.accounts.models import Account
 from madrproject.config.security import get_password_hash
 
@@ -15,8 +17,30 @@ class AccountRepository:
     def __init__(self, session: Session):
         self.session = session
 
+    def is_email_or_username_taken(
+        self, email: EmailStr, username: str, exclude_account_id: int
+    ) -> bool:
+        """
+        Check if the email or username is already taken by another account.
+
+        Args:
+            email (str): Email to check.
+            username (str): Username to check.
+            exclude_account_id (int): Account ID to exclude from the check.
+
+        Returns:
+            bool: True if email or username is taken, False otherwise.
+        """
+        exists = self.session.scalar(
+            select(Account).where(
+                ((Account.email == email) | (Account.username == username))
+                & (Account.id != exclude_account_id)
+            )
+        )
+        return exists is not None
+
     def get_by_username_or_email(
-        self, username: str, email: str
+        self, username: str, email: EmailStr
     ) -> Optional[Account]:
         """
         Retrieve an account by username or email.
@@ -34,7 +58,7 @@ class AccountRepository:
             )
         )
 
-    def create(self, username: str, email: str, password: str) -> Account:
+    def create(self, username: str, email: EmailStr, password: str) -> Account:
         """
         Create a new account.
 
@@ -84,7 +108,7 @@ class AccountRepository:
         self.session.delete(account)
         self.session.commit()
 
-    def list_all(self) -> List[Account]:
+    def list_all(self) -> Sequence[Account]:
         """
         Retrieve all accounts.
 

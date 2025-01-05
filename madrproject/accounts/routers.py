@@ -79,6 +79,15 @@ def update_account(
         )
 
     repo = AccountRepository(session)
+
+    if repo.is_email_or_username_taken(
+        account.email, account.username, account_id
+    ):
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='Email or Username is already in use by another account.',
+        )
+
     current_account.email = account.email
     current_account.password = get_password_hash(account.password)
     current_account.username = account.username
