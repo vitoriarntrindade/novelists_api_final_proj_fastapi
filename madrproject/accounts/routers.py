@@ -13,7 +13,7 @@ from madrproject.accounts.schemas import (
 from madrproject.config.database import get_session
 from madrproject.config.security import get_current_account, get_password_hash
 
-router = APIRouter(prefix='/account', tags=['accounts'])
+router = APIRouter(prefix='/account', tags=['account'])
 
 
 @router.post(

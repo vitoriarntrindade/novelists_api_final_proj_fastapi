@@ -14,7 +14,7 @@ from madrproject.books.schemas import (
 from madrproject.config.database import get_session
 from madrproject.config.security import get_current_account
 
-router = APIRouter(prefix='/books', tags=['books'])
+router = APIRouter(prefix='/book', tags=['book'])
 
 
 @router.post('/', response_model=BookSchemaPublic, status_code=201)

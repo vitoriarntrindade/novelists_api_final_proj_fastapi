@@ -15,7 +15,7 @@ from madrproject.novelists.schemas import (
     UpdateNovelistSchema,
 )
 
-router = APIRouter(prefix='/novelists', tags=['novelists'])
+router = APIRouter(prefix='/novelist', tags=['novelist'])
 
 
 @router.post('/', response_model=NovelistPublicSchema, status_code=201)
